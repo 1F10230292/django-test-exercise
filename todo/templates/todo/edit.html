@@ -1,0 +1,26 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+  <head>
+    <title>Edit task</title>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <h1>Edit task</h1>
+    <p>You can edit tasks from the following form.</p>
+
+    <form method="POST">
+      {% csrf_token %} <p>
+        <label for="id_title">Title</label><br>
+        <input type="text" id="id_title" name="title" value="{{ task.title }}">
+      </p>
+
+      <p>
+        <label for="dueInput">Due at:</label><br />
+        <input id="dueInput" name="due_at" type="datetime-local" />
+      </p>
+
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>
