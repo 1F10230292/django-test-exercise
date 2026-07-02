@@ -22,8 +22,10 @@
 
     <div>
       <a href="{% url 'index' %}">Top</a>
+      {% if not task.completed %}
+|     <a href="{% url 'close_task' task.id %}">Close</a>
+      {% endif %}
       <a href="{% url 'edit' task.id %}">Edit</a> | 
       <a href="{% url 'delete' task.id %}">Delete</a>
     </div>
-  </body>
 </html>
