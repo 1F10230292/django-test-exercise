@@ -3,7 +3,7 @@
 set -o errexit
 
 # 👇 この行を追加（Poetryの環境に gunicorn を強制的にインストールする）
-
+poetry add gunicorn
 poetry install -r requirements.txt
 
 python manage.py collectstatic --no-input
