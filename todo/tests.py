@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.utils import timezone
 from datetime import datetime
 from todo.models import Task
+from datetime import datetime
 
 
 # Create your tests here.
@@ -112,3 +113,30 @@ class TodoViewTestCase(TestCase):
         response = client.get("/1/")
 
         self.assertEqual(response.status_code, 404)
+
+    def test_edit_get_success(self):
+        task = Task(title="task1", due_at=timezone.make_aware(datetime(2024, 7, 1)))
+        task.save()
+        client = Client()
+        response = client.get("/{}/edit/".format(task.pk))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.templates[0].name, "todo/edit.html")
+        self.assertEqual(response.context["task"], task)
+
+    def test_edit_post_updates_task_and_redirects(self):
+        task = Task(title="old title", due_at=timezone.make_aware(datetime(2024, 7, 1)))
+        task.save()
+        client = Client()
+        response = client.post(
+            "/{}/edit/".format(task.pk),
+            {"title": "updated title", "due_at": "2024-08-01 00:00:00"},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/")
+
+        task.refresh_from_db()
+        self.assertEqual(task.title, "updated title")
+        local_due_at = timezone.localtime(task.due_at)
+        self.assertEqual(local_due_at.strftime("%Y-%m-%d %H:%M:%S"), "2024-08-01 00:00:00")
