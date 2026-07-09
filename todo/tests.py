@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.utils import timezone
 from datetime import datetime
 from todo.models import Task
+from django.urls import reverse
 from datetime import datetime
 
 
@@ -113,6 +114,23 @@ class TodoViewTestCase(TestCase):
         response = client.get("/1/")
 
         self.assertEqual(response.status_code, 404)
+    
+    def test_close_task_success(self):
+        task = Task(title="Test Close Task", completed=False)
+        task.save()
+        
+        client = Client()
+        response = client.get(reverse('close_task', args=[task.pk]))
+
+        expected_redirect_url = reverse('detail', args=[task.pk])
+        self.assertRedirects(response, expected_redirect_url, status_code=302, target_status_code=200)
+        
+        task.refresh_from_db()
+        self.assertTrue(task.completed)
+
+    def test_close_task_fail_not_found(self):
+        client = Client()
+        response = client.get(reverse('close_task', args=[999]))
 
     def test_edit_get_success(self):
         task = Task(title="task1", due_at=timezone.make_aware(datetime(2024, 7, 1)))
