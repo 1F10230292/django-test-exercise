@@ -3,6 +3,7 @@ from django.utils import timezone
 from datetime import datetime
 from todo.models import Task
 from django.urls import reverse
+from datetime import datetime
 
 
 # Create your tests here.
@@ -130,4 +131,50 @@ class TodoViewTestCase(TestCase):
     def test_close_task_fail_not_found(self):
         client = Client()
         response = client.get(reverse('close_task', args=[999]))
+
+    def test_edit_get_success(self):
+        task = Task(title="task1", due_at=timezone.make_aware(datetime(2024, 7, 1)))
+        task.save()
+        client = Client()
+        response = client.get("/{}/edit/".format(task.pk))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.templates[0].name, "todo/edit.html")
+        self.assertEqual(response.context["task"], task)
+
+    def test_edit_post_updates_task_and_redirects(self):
+        task = Task(title="old title", due_at=timezone.make_aware(datetime(2024, 7, 1)))
+        task.save()
+        client = Client()
+        response = client.post(
+            "/{}/edit/".format(task.pk),
+            {"title": "updated title", "due_at": "2024-08-01 00:00:00"},
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/")
+
+        task.refresh_from_db()
+        self.assertEqual(task.title, "updated title")
+        local_due_at = timezone.localtime(task.due_at)
+        self.assertEqual(local_due_at.strftime("%Y-%m-%d %H:%M:%S"), "2024-08-01 00:00:00")
+        
+    def test_delete_task_success(self):
+        task = Task(title="task1", due_at=timezone.make_aware(datetime(2024, 7, 1)))
+        task.save()
+        client = Client()
+
+        response = client.get("/{}/delete".format(task.pk))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Task.objects.filter(pk=task.pk).exists())
+
+        follow_response = client.get(response.url)
+        self.assertEqual(follow_response.status_code, 200)
+        self.assertEqual(len(follow_response.context["tasks"]), 0)
+
+    def test_delete_task_fail(self):
+        client = Client()
+        response = client.get("/1/delete")
+
         self.assertEqual(response.status_code, 404)
