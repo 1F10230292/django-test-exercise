@@ -152,3 +152,103 @@ a:hover {
   background: #8a9199;
   text-decoration: line-through;
 }
+
+/* Labels */
+.label-manager {
+  background: #ffffff;
+  border: 1px solid #dde5ea;
+  border-radius: 10px;
+  padding: 1rem;
+  max-width: 540px;
+}
+
+.label-manager h2 {
+  margin-top: 0;
+  color: #1f4951;
+}
+
+.label-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.label-form input[type="text"] {
+  width: auto;
+  flex: 1;
+}
+
+.label-form input[type="color"] {
+  width: 48px;
+  height: 42px;
+  padding: 2px;
+  cursor: pointer;
+}
+
+.label-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.label-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+
+.label-chip .label-delete {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.label-chip .label-delete:hover {
+  color: #ffe0e0;
+}
+
+.task-label-tag {
+  display: inline-block;
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 0.1rem 0.6rem;
+  font-size: 0.8rem;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+
+/* Filter by label */
+.label-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-chip {
+  display: inline-block;
+  background: #e3e9ee;
+  color: #24292f;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.filter-chip:hover {
+  text-decoration: none;
+  opacity: 0.85;
+}
+
+.filter-chip.active {
+  border-color: #1f4951;
+  box-shadow: 0 0 0 2px rgba(31, 73, 81, 0.25);
+}
