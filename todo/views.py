@@ -25,6 +25,13 @@ def index(request):
         tasks = Task.objects.order_by("-posted_at")
     # tasks = Task.objects.all()
 
+    # Filter tasks by label (e.g. ?label=3, or ?label=none for unlabeled).
+    selected_label = request.GET.get("label")
+    if selected_label == "none":
+        tasks = tasks.filter(label__isnull=True)
+    elif selected_label:
+        tasks = tasks.filter(label_id=selected_label)
+
     labels = Label.objects.all()
 
     tasks_json = [
@@ -39,7 +46,12 @@ def index(request):
         for task in tasks
     ]
 
-    context = {"tasks": tasks, "tasks_json": tasks_json, "labels": labels}
+    context = {
+        "tasks": tasks,
+        "tasks_json": tasks_json,
+        "labels": labels,
+        "selected_label": selected_label,
+    }
     return render(request, "todo/index.html", context)
 
 

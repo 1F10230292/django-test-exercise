@@ -73,6 +73,31 @@
     </div>
     <br />
 
+    <!-- Filter by label -->
+    <div class="label-filter">
+      <strong>Filter by label:</strong>
+      <a
+        class="filter-chip {% if not selected_label %}active{% endif %}"
+        href="{% url 'index' %}"
+        >All</a
+      >
+      {% for label in labels %}
+      <a
+        class="filter-chip {% if selected_label == label.id|stringformat:'s' %}active{% endif %}"
+        style="background: {{ label.color }}; color: #fff;"
+        href="{% url 'index' %}?label={{ label.id }}"
+        >{{ label.name }}</a
+      >
+      {% endfor %}
+      <a
+        class="filter-chip {% if selected_label == 'none' %}active{% endif %}"
+        href="{% url 'index' %}?label=none"
+        >No label</a
+      >
+    </div>
+
+    <br />
+
     <div>
       <a href="{% url 'index' %}?order=due">Sort by Due Date</a> |
       <a href="{% url 'index' %}?order=post">Sort by Posted Date</a>
