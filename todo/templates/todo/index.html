@@ -38,18 +38,37 @@
     </div>
 
     {% for task in tasks %}
-    <div class="text">
-      <h2><a href="{% url 'detail' task.id %}">{{task.title}}</a></h2>
-      <ul>
-        <li>Posted at: {{ task.posted_at }}</li>
-        {% if task.due_at %}
-        <li>Due at: {{ task.due_at }}</li>
-        {% endif %} {% if task.completed %}
-        <li>Status: Completed</li>
+    <div class="text" style="display: flex; align-items: flex-start; margin-bottom: 20px; padding: 10px; border-bottom: 1px solid #eee;">
+      
+      <div style="margin-right: 15px; padding-top: 5px;">
+        {% if not task.completed %}
+        <form action="{% url 'close_task' task.id %}" method="post" style="margin: 0; display: inline-block;">
+          {% csrf_token %}
+          <input type="checkbox" onchange="this.form.submit()" style="width: 18px; height: 18px; cursor: pointer;">
+        </form>
         {% else %}
-        <li>Status: Not Completed</li>
+        <input type="checkbox" checked disabled style="width: 18px; height: 18px; margin: 0;">
         {% endif %}
-      </ul>
+      </div>
+
+      <div style="flex: 1;">
+        <h2 style="margin: 0 0 8px 0; font-size: 1.3rem;">
+          <a href="{% url 'detail' task.id %}" style="text-decoration: none; color: #333;">{{task.title}}</a>
+        </h2>
+        <ul style="margin: 0; padding-left: 20px; color: #666; font-size: 0.9rem;">
+          <li>Posted at: {{ task.posted_at }}</li>
+          {% if task.due_at %}
+          <li>Due at: {{ task.due_at }}</li>
+          {% endif %}
+          
+          {% if task.completed %}
+          <li style="color: green; font-weight: bold;">Status: Completed</li>
+          {% else %}
+          <li style="color: #e05353;">Status: Not Completed</li>
+          {% endif %}
+        </ul>
+      </div>
+
     </div>
     {% endfor %}
   </body>
