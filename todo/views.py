@@ -20,7 +20,17 @@ def index(request):
         tasks = Task.objects.order_by("-posted_at")
     # tasks = Task.objects.all()
 
-    context = {"tasks": tasks}
+    tasks_json = [
+        {
+            "id": task.id,
+            "title": task.title,
+            "due_at": task.due_at.isoformat() if task.due_at else None,
+            "completed": task.completed,
+        }
+        for task in tasks
+    ]
+
+    context = {"tasks": tasks, "tasks_json": tasks_json}
     return render(request, "todo/index.html", context)
 
 
