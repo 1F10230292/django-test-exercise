@@ -38,7 +38,10 @@ def close_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     task.completed = True
     task.save()
-    return redirect(request.META.get('HTTP_REFERER', 'detail', task_id=task.id))
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
+    return redirect('detail', task_id=task.id)
   
 def edit(request, task_id):
     task = get_object_or_404(Task, id=task_id)
