@@ -27,9 +27,50 @@
         <input id="dueInput" name="due_at" type="datetime-local" />
       </div>
       <div>
+        <label for="labelSelect">Label</label><br />
+        <select id="labelSelect" name="label">
+          <option value="">(No label)</option>
+          {% for label in labels %}
+          <option value="{{ label.id }}">{{ label.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
         <button type="submit">Submit</button>
       </div>
     </form>
+    <br />
+
+    <!-- Label management -->
+    <div class="label-manager">
+      <h2>Labels</h2>
+      <form action="{% url 'add_label' %}" method="post" class="label-form">
+        {% csrf_token %}
+        <input
+          name="name"
+          type="text"
+          placeholder="Label name"
+          required
+        />
+        <input name="color" type="color" value="#1f6f8b" />
+        <button type="submit">Add label</button>
+      </form>
+      <div class="label-list">
+        {% for label in labels %}
+        <span class="label-chip" style="background: {{ label.color }};">
+          {{ label.name }}
+          <a
+            class="label-delete"
+            href="{% url 'delete_label' label.id %}"
+            title="Delete label"
+            >&times;</a
+          >
+        </span>
+        {% empty %}
+        <p>No labels yet.</p>
+        {% endfor %}
+      </div>
+    </div>
     <br />
 
     <div>
@@ -90,6 +131,8 @@
               String(due.getMinutes()).padStart(2, "0"),
             completed: task.completed,
             id: task.id,
+            label: task.label,
+            color: task.color,
           });
         }
 
@@ -145,9 +188,15 @@
             for (const t of dayTasks) {
               const ev = document.createElement("div");
               ev.className = "calendar-event";
-              if (t.completed) ev.classList.add("completed");
-              ev.textContent = t.time + " " + t.title;
-              ev.title = t.time + " " + t.title;
+              if (t.completed) {
+                ev.classList.add("completed");
+              } else if (t.color) {
+                // Color the event by its label.
+                ev.style.background = t.color;
+              }
+              const labelText = t.label ? "[" + t.label + "] " : "";
+              ev.textContent = t.time + " " + labelText + t.title;
+              ev.title = t.time + " " + labelText + t.title;
               cell.appendChild(ev);
             }
 
@@ -195,7 +244,14 @@
 
     {% for task in tasks %}
     <div class="text">
-      <h2><a href="{% url 'detail' task.id %}">{{task.title}}</a></h2>
+      <h2>
+        <a href="{% url 'detail' task.id %}">{{task.title}}</a>
+        {% if task.label %}
+        <span class="task-label-tag" style="background: {{ task.label.color }};"
+          >{{ task.label.name }}</span
+        >
+        {% endif %}
+      </h2>
       <ul>
         <li>Posted at: {{ task.posted_at }}</li>
         {% if task.due_at %}

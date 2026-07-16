@@ -21,6 +21,21 @@
         <input id="dueInput" name="due_at" type="datetime-local" />
       </p>
 
+      <p>
+        <label for="labelSelect">Label</label><br />
+        <select id="labelSelect" name="label">
+          <option value="">(No label)</option>
+          {% for label in labels %}
+          <option
+            value="{{ label.id }}"
+            {% if task.label_id == label.id %}selected{% endif %}
+          >
+            {{ label.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </p>
+
       <input type="submit" value="Submit">
     </form>
   </body>
